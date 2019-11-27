@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#/usr/bin/python2
 import numpy as np
 from multiprocessing import Process, Queue
 
@@ -15,23 +17,37 @@ def sample_function(user_train, usernum, itemnum, batch_size, maxlen, result_que
         user = np.random.randint(1, usernum + 1)
         while len(user_train[user]) <= 1: user = np.random.randint(1, usernum + 1)
 
+        #已经padding好了
+        seq_t = np.zeros([maxlen], dtype=np.int32)
         seq = np.zeros([maxlen], dtype=np.int32)
         pos = np.zeros([maxlen], dtype=np.int32)
         neg = np.zeros([maxlen], dtype=np.int32)
-        nxt = user_train[user][-1]
-        idx = maxlen - 1
+        nxt = user_train[user][-1]  #最后一个item
+        idx = maxlen - 1            #序列长度减一   199
 
-        ts = set(user_train[user])
-        for i in reversed(user_train[user][:-1]):
+
+        ts = user_train[str(user)+"_t"][:-1]
+        j = len(ts)-2
+        
+        # user_train[user] = [1，2，3，4]
+        # seq = [1,2,3]  pos = [2,3,4] neg = [6,7,8]
+        tempset = set(user_train[user])
+        for i in reversed(user_train[user][:-1]): #从倒数第二个开始倒叙
+            seq_t[idx] = ts[j]
+            
             seq[idx] = i
-            pos[idx] = nxt
-            if nxt != 0: neg[idx] = random_neq(1, itemnum + 1, ts)
+            pos[idx] = nxt # 作为预测结果 正例
+            if nxt != 0: 
+                neg[idx] = random_neq(1, itemnum + 1, tempset) # 采样负例
             nxt = i
             idx -= 1
-            if idx == -1: break
+            j -= 1
+            
+            if idx == -1: break  # idx  从199 处理到0，  就是取最近的200个item
+#        print(seq_t.shape,seq.shape)
+        return (user, seq, pos, neg, seq_t)  
 
-        return (user, seq, pos, neg)
-
+    # 一个batch里面有很多user 的数据，所有的数据里面，可能有相同的user的数据
     np.random.seed(SEED)
     while True:
         one_batch = []
