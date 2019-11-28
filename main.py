@@ -21,7 +21,7 @@ parser.add_argument('--dataset', required=True)
 parser.add_argument('--train_dir', required=True)
 parser.add_argument('--batch_size', default=128, type=int)
 parser.add_argument('--lr', default=0.005, type=float)
-parser.add_argument('--maxlen', default=200, type=int)
+parser.add_argument('--maxlen', default=400, type=int)
 parser.add_argument('--hidden_units', default=50, type=int)
 parser.add_argument('--num_blocks', default=2, type=int)
 parser.add_argument('--num_epochs', default=201, type=int)
@@ -69,7 +69,7 @@ try:
                                      model.is_training: True})
 #            print(step, auc, loss)
             
-        if epoch % 20 == 0:
+        if epoch % 10 == 0:
             t1 = time.time() - t0
             T += t1
             print 'Evaluating',

@@ -5,7 +5,7 @@ import copy
 import random
 import numpy as np
 from collections import defaultdict
-
+import time
 
 def data_partition(fname):
     usernum = 0
@@ -19,13 +19,15 @@ def data_partition(fname):
     f = open('data/%s.txt' % fname, 'r')
     for line in f:
         u, i, ymd, hms, timestamp = line.rstrip().split(' ')
+        a=time.localtime(float(timestamp))
+        
         u = int(u)
         i = int(i)
         long_date = str(ymd+" "+hms)
         usernum = max(u, usernum)
         itemnum = max(i, itemnum)
         User[u].append(i)
-        TS[u].append(timestamp)
+        TS[u].append(a.tm_yday)
         
 
     for user in User:

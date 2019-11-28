@@ -31,29 +31,32 @@ class Model():
                                                  )
 
 
+            tseq_max = tf.reduce_max(self.input_seq_t, reduction_indices=[1])
+            tseq_max_1 = tf.expand_dims(tseq_max, -1)
+            time_seq = tf.subtract(tseq_max_1, self.input_seq_t)
+
+
+
             # Positional Encoding
-#            tt, pos_emb_table = embedding(
-#                # 得到一个 【batchsize * maxlen】的张量 batchsize X [0,1,2,3,.....199]
-#                tf.tile(tf.expand_dims(tf.range(tf.shape(self.input_seq)[1]), 0), [tf.shape(self.input_seq)[0], 1]),
-#                vocab_size=args.maxlen,
-#                num_units=args.hidden_units,
-#                zero_pad=False,
-#                scale=False,
-#                l2_reg=args.l2_emb,
-#                scope="dec_pos",
-#                reuse=reuse,
-#                with_t=True
-#            )
-#            
-#            self.seq += tt
+            tt, pos_emb_table = embedding(
+                # 得到一个 【batchsize * maxlen】的张量 batchsize X [0,1,2,3,.....199]
+                #tf.tile(tf.expand_dims(tf.range(tf.shape(self.input_seq)[1]), 0), [tf.shape(self.input_seq)[0], 1]),
+                time_seq,
+                vocab_size= 300, #args.maxlen,   # 20190101 ~ 20190901
+                num_units=args.hidden_units,
+                zero_pad=False,
+                scale=False,
+                l2_reg=args.l2_emb,
+                scope="dec_pos",
+                reuse=reuse,
+                with_t=True
+            )
+            self.seq += tt
             
-            t = t2v(tf.cast(self.input_seq_t,dtype=tf.float32),
-                    num_units=args.hidden_units, 
-                    scope="Time2vec")
-            
-            
-            
-            self.seq += t
+#            t = t2v(tf.cast(time_seq,dtype=tf.float32),
+#                    num_units=args.hidden_units, 
+#                    scope="Time2vec")
+#            self.seq += t
 
             # Dropout
             self.seq = tf.layers.dropout(self.seq,

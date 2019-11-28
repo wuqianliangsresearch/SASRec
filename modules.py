@@ -10,6 +10,7 @@ from __future__ import print_function
 import tensorflow as tf
 import numpy as np
 
+
 def positional_encoding(dim, sentence_length, dtype=tf.float32):
 
     encoded_vec = np.array([pos/np.power(10000, 2*i/dim) for pos in range(sentence_length) for i in range(dim)])
@@ -19,27 +20,30 @@ def positional_encoding(dim, sentence_length, dtype=tf.float32):
     return tf.convert_to_tensor(encoded_vec.reshape([sentence_length, dim]), dtype=dtype)
 
 
-def t2v(time_seq, 
-        num_units, 
-        scope="Time2vec", 
-        reuse=None):
-    '''
-    Time2Vec: Learning a Vector Representation of Time
-    Args:
-        time_seq:  batchsize x maxlen x 1
-    '''
-    
-    with tf.variable_scope(scope, reuse=reuse):
-        time_seq = tf.expand_dims(time_seq, -1)  # 从 bxn -> bxnx1
-        params = {"inputs": time_seq, "filters": 1, "kernel_size": 1,"use_bias": True} # kernel size 1x1   
-        v1 = tf.layers.conv1d(**params)     # i=0
-        
-        params = {"inputs": time_seq, "filters": num_units-1 , "kernel_size": 1, "activation": tf.sin, "use_bias": True} # kernel size 1x1   
-        v2 = tf.layers.conv1d(**params) # 1=<i<=k
-        
-        outputs = tf.concat([v1,v2],2)
-        
-    return outputs
+#def t2v(time_seq, 
+#        num_units, 
+#        scope="Time2vec", 
+#        reuse=None):
+#    '''
+#    Time2Vec: Learning a Vector Representation of Time
+#    Args:
+#        time_seq:  batchsize x maxlen x 1
+#    '''
+#    
+#    with tf.variable_scope(scope, reuse=reuse):
+##        tseq_max = tf.reduce_max(time_seq, reduction_indices=[1])
+##        tseq_max_1 = tf.expand_dims(tseq_max, -1)
+##        time_seq = tf.subtract(tseq_max_1, time_seq)
+#        time_seq = tf.expand_dims(time_seq, -1)  # 从 bxn -> bxnx1
+#        params = {"inputs": time_seq, "filters": 1, "kernel_size": 1,"use_bias": True} # kernel size 1x1   
+#        v1 = tf.layers.conv1d(**params)     # i=0
+#        
+#        params = {"inputs": time_seq, "filters": num_units-1 , "kernel_size": 1, "activation": tf.sin, "use_bias": True} # kernel size 1x1   
+#        v2 = tf.layers.conv1d(**params) # 1=<i<=k
+#        
+#        outputs = tf.concat([v1,v2],2)
+#        
+#    return outputs
 
 def normalize(inputs, 
               epsilon = 1e-8,

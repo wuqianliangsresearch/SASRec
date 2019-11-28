@@ -45,6 +45,7 @@ def sample_function(user_train, usernum, itemnum, batch_size, maxlen, result_que
             
             if idx == -1: break  # idx  从199 处理到0，  就是取最近的200个item
 #        print(seq_t.shape,seq.shape)
+#        print("========",int(seq_t[-1])-int(seq_t[0]))   
         return (user, seq, pos, neg, seq_t)  
 
     # 一个batch里面有很多user 的数据，所有的数据里面，可能有相同的user的数据
