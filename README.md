@@ -1,3 +1,8 @@
+Modify position encoding to relative position
+Motivated from transformer-xl
+
+
+---------------------------------------------------------------------------------------------------------------------------------
 # SASRec: Self-Attentive Sequential Recommendation
 
 This is our TensorFlow implementation for the paper:
